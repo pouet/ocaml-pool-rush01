@@ -97,7 +97,11 @@ let rec main_loop glbl (tama : Tama.tama) time =
     in
 
     if tama#is_alive then
-        List.iteri fct glbl.btns;
+        List.iteri fct glbl.btns
+    else if tama#die_sound_played = false then begin
+        tama#update_die_snd_played;
+        Sdlmixer.play_sound glbl.snd.scream
+    end;
 
     render_all glbl tama;
     glbl.ticks <- Frame.frame_wait glbl.ticks;

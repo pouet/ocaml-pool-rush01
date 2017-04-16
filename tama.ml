@@ -4,6 +4,7 @@ class tama =
         val mutable energy = 100
         val mutable hygiene = 100
         val mutable happyness = 100
+        val mutable _die_sound_played = false
 
         initializer self#load
 
@@ -67,6 +68,9 @@ class tama =
         method get_energy = energy
         method get_hygiene = hygiene
         method get_happyness = happyness
+
+        method die_sound_played = _die_sound_played
+        method update_die_snd_played = _die_sound_played <- true
 
         method print_stat =
             Printf.printf "Health:%d Energy:%d Hygiene:%d Happyness:%d\n" health energy hygiene happyness
