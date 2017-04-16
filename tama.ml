@@ -5,7 +5,9 @@ class tama =
         val mutable hygiene = 100
         val mutable happyness = 100
 
-        method check = health <= 0 || energy <= 0 || hygiene <= 0 || happyness <= 0
+        initializer self#load
+
+        method is_alive = health > 0 && energy > 0 && hygiene > 0 && happyness > 0
 
         method sethealth add =
             let res = health + add in
@@ -43,23 +45,23 @@ class tama =
             self#sethealth 25;
             self#setenergy (-10);
             self#sethygiene (-20);
-            self#sethappyness(5);
+            self#sethappyness (5);
 
         method thunder =
             self#sethealth (-20);
             self#setenergy (25);
-            self#sethappyness(-20)
+            self#sethappyness (-20)
 
         method bath =
             self#sethealth (-20);
             self#setenergy (-10);
             self#sethygiene (25);
-            self#sethappyness(5)
+            self#sethappyness (5)
 
         method kill =
             self#sethealth (-20);
             self#setenergy (-10);
-            self#sethappyness(20)
+            self#sethappyness (20)
 
         method get_health = health
         method get_energy = energy
@@ -73,25 +75,36 @@ class tama =
            (string_of_int health) ^ " " ^ (string_of_int energy) ^ " " ^ (string_of_int hygiene) ^ " " ^ (string_of_int happyness)     
 
         method save =
+            if self#is_alive = false then begin
+                    health <- 100;
+                    energy <- 100;
+                    hygiene <- 100;
+                    happyness <- 100;
+            end;
             try
-                let oc = open_out "save.txt" in
+                let oc = open_out "save.itama" in
                 Printf.fprintf oc "%s" self#to_string
             with
-            | _         -> raise(invalid_arg "Error when saving")
+            | _         -> print_endline "Error when saving"
 
         method load =
             try
-                let ic = open_in "save.txt" in
+                let ic = open_in "save.itama" in
                 let line = input_line ic in
                 let split = String.split_on_char ' ' line in
                 health <- (int_of_string(List.nth split 0));
                 energy <- (int_of_string(List.nth split 1));
                 hygiene <- (int_of_string(List.nth split 2));
                 happyness <- (int_of_string(List.nth split 3));
-                if health < 0 || health > 100 then health <- 100;
-                if energy < 0 || energy > 100 then energy <- 100;
-                if hygiene < 0 || hygiene > 100 then hygiene <- 100;
-                if happyness < 0 || happyness > 100 then happyness <- 100
+                if health < 0 || health > 100 then invalid_arg "";
+                if energy < 0 || energy > 100 then invalid_arg "";
+                if hygiene < 0 || hygiene > 100 then invalid_arg "";
+                if happyness < 0 || happyness > 100 then invalid_arg ""
             with
-            | _         -> ()
+            | _         ->
+                    print_endline "File corruped";
+                    health <- 100;
+                    energy <- 100;
+                    hygiene <- 100;
+                    happyness <- 100;
     end
